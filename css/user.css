@@ -1,0 +1,28 @@
+/* Login and signup forms */
+
+.account-form button {
+  width: 4rem;
+  margin-left: 80px;
+}
+
+#signup-form button {
+  width: 8rem;
+}
+
+.account-container {
+  padding-left: 20px;
+  overflow-y: scroll;
+  height: calc(100vh - 80px);
+}
+
+/**User Profile Page*/
+
+#user-profile{
+  padding: 40px;
+}
+
+#user-profile p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
