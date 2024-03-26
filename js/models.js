@@ -80,13 +80,19 @@ class StoryList {
 
   async addStory(user, newStory) {
     // UNIMPLEMENTED: complete this function
-    const token = user.loginToken;
-    const response = await axios.post(`${BASE_URL}/stories`, {token, story: newStory});
-    const story = new Story (response.data.story)
+    try{
+      const token = user.loginToken;
+      const response = await axios.post(`${BASE_URL}/stories`, {token, story: newStory});
+      const story = new Story (response.data.story)
 
-    this.stories.unshift(story);
-    user.ownStories.unshift(story);   
-    return story;
+      this.stories.unshift(story);
+      user.ownStories.unshift(story);   
+      return story;
+    }
+    catch (e){
+      alert ("url must include https://")
+    }
+
   }
 
 
