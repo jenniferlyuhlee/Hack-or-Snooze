@@ -91,19 +91,15 @@ class StoryList {
 
 
   async deleteStory(user, storyId){
+    //had authentification issues with making delete request, had to pass in token with data object
     const token = user.loginToken;
-    await axios.delete(`${BASE_URL}/stories/${storyId}`, {token});
+    await axios.delete(`${BASE_URL}/stories/${storyId}`, {data: {token}});
     
     //updates the arrays to filter out the removed story by storyId
-    this.stories.filter(function(story){
-      story.storyId !== storyId;
-    });
-    user.ownStories.filter(function(story){
-      story.storyId !== storyId;
-    });
-    user.favorites.filter(function(story){
-      story.storyId !== storyId;
-    });
+    //using arrow functions so the callback refers to the same 'this'
+    this.stories = this.stories.filter(s => s.storyId !== storyId);
+    user.ownStories = user.ownStories.filter(s => s.storyId !== storyId);
+    user.favorites = user.favorites.filter(s => s.storyId !== storyId);
   }
 }
 
@@ -225,23 +221,20 @@ class User {
 
   /** Add Favorite Stories */
   async addFavoriteStory (story){
-    await axios.post(`${BASE_URL}/users/${this.username}/favorites/${story.storyId}, {token:${this.loginToken}}`);
+    //had authentification issues with making delete request, had to pass in token with data object
+    await axios.post(`${BASE_URL}/users/${this.username}/favorites/${story.storyId}`, {token:this.loginToken});
     this.favorites.unshift(story);
   }
 
   /** Remove Favorite Stories */
   async removeFavoriteStory (story){
-    await axios.delete(`${BASE_URL}/users/${this.username}/favorites/${story.storyId}, {token:${this.loginToken}}`)
-    this.favorites.filter(function(s){
-      (s.storyId !== story.storyId);
-    });
+    await axios.delete(`${BASE_URL}/users/${this.username}/favorites/${story.storyId}`, {data:{token:this.loginToken}});
+    this.favorites = this.favorites.filter(s =>(s.storyId !== story.storyId));
   }
 
-  /**Checks for boolean status of story if in favorites */
-  isFavorite(story){
-    return this.favorites.some(function(s){
-      (s.storyId === story.storyId);
-    });
+  /**Checks if story is in favorites, returning True/False */
+  isFavorite(story) {
+    return this.favorites.some(s => (s.storyId === story.storyId));
   }
-  
+
 }

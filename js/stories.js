@@ -20,7 +20,7 @@ async function getAndShowStoriesOnStart() {
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story, showTrash = false) {
+function generateStoryMarkup(story, showTrash) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
@@ -44,15 +44,15 @@ function generateStoryMarkup(story, showTrash = false) {
 function addStar(story, user) {
   const starType = user.isFavorite(story)? "fas" : "far";
   return `
-    <span class="star">
-    <i class="${starType} fa-star"></i>
+    <span>
+    <i class="star ${starType} fa-star"></i>
     </span>`;
 }
 
 function addTrash(){
   return `
-    <span class="trash">
-    <i class="fas fa-trash-alt"></i>
+    <span>
+    <i class="trash fas fa-trash-alt"></i>
     </span>`;
 }
 
@@ -66,7 +66,7 @@ function putStoriesOnPage() {
 
   // loop through all of our stories and generate HTML for them
   for (let story of storyList.stories) {
-    const $story = generateStoryMarkup(story);
+    const $story = generateStoryMarkup(story, false);
     $allStoriesList.append($story);
   }
 
@@ -99,8 +99,8 @@ async function clickDeleteStory(evt){
   console.debug("clickDeleteStory");
   const $target = $(evt.target);
   const storyId = $target.parent().parent().attr('id');
-
   await storyList.deleteStory(currentUser, storyId);
+  
   putUserStoriesOnPage();
 
 }
@@ -118,7 +118,7 @@ function putFavoritesOnPage(){
   }
   else{
     for (let story of currentUser.favorites){
-      const $story = generateStoryMarkup(story);
+      const $story = generateStoryMarkup(story, false);
       $favoriteStoriesList.append($story);
     }
   }
@@ -131,7 +131,7 @@ async function toggleFavoriteStory(evt){
   console.debug("toggleFavoriteStory");
   const $target = $(evt.target);
   const storyId = $target.parent().parent().attr('id');
-  const story = storyList.stories.find(s => s.storyId === storyId);
+  const story = storyList.stories.find(story => story.storyId === storyId);
 console.debug($target);
   //if not favorited, checks star & updates API 
   if ($target.hasClass('far')){
@@ -153,6 +153,7 @@ $storyLists.on("click", ".star", toggleFavoriteStory);
 
 /** Gets list of user stories from server, generates HTML and puts on page */
 function putUserStoriesOnPage(){
+  console.debug("putUserStoriesOnPage");
   $storiesContainer.show();
   $myStoriesList.empty();
   if (currentUser.ownStories.length === 0){
@@ -166,8 +167,5 @@ function putUserStoriesOnPage(){
   }
   $myStoriesList.show();
 }
-
-
-
 
 
